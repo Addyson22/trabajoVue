@@ -55,7 +55,7 @@
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="checkbox" id="pizarraDigital" v-model="equipos"
                                 value="Pizarra Digital">
-                            <label class="form-check-label" for="pizarraDigital">Pizarra Digital</label>
+                            <label class="form-check-label" for="equipoVideoconferencia">Pizarra Digital</label>
                         </div>
                     </div>
                     <!--radio button-->
@@ -87,7 +87,6 @@
                     <div class="text-center">
                         <button type="button" class="btn btn-primary m-2" @click="guardarTarea">Guardar</button>
                         <button type="button" class="btn btn-secondary" @click="modificarTarea">Modificar</button>
-                        <span style="margin-left: 8px;"></span>
                         <button type="button" class="btn btn-secondary" @click="limpiarTarea">Limpiar</button>
                     </div>
                     <!--input para el archivo-->
@@ -133,13 +132,11 @@
                             <td class="text-center">{{ tarea.prioridad }}</td>
                             <td class="text-center">
                                 <div>
-                                    <button class="btn btn-warning m-2" @click="cargarTarea(tarea)">
+                                    <button class="btn btn-warning m-2" @click="modificarTarea(tarea.id)">
                                         <i class="bi bi-pencil"></i></button>
                                     <span style="margin-left: 8px;"></span>
-                                    <button class="btn btn-danger m-2" @click="eliminarTarea(tarea._id)">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-
+                                    <button class="btn btn-danger m-2" @click="eliminarTarea(tarea.id)">
+                                        <i class="bi bi-trash"></i></button>
                                 </div>
                             </td>
                         </tr>
@@ -207,11 +204,9 @@ export default {
             this.sala = tarea.sala;
             this.equipos = tarea.equipos;
             this.prioridad = tarea.prioridad;
-            this.observaciones = tarea.observaciones;
+            this.observaciones = tarea.observaciones
             this.tareaSeleccionada = tarea;
         },
-
-
 
         async modificarTarea() {
             try {
@@ -299,94 +294,54 @@ export default {
 
         async guardarTarea() {
             try {
-                // console.log(
-                //   this.nombre,
-                //   this.descripcion,
-                //   this.fecha,
-                //   this.sala,
-                //   this.prioridad
-                // );
-                // const nuevaTarea = {
-                //   nombre: this.nombre,
-                //   descripcion: this.descripcion,
-                //   fecha: format(new Date(this.fecha), "dd-MM-yyyy"),
-                //   sala: this.sala,
-                //   equipos: this.equipos,
-                //   prioridad: this.prioridad,
-                //   observaciones: this.observaciones,
-                // };
+                console.log(this.nombre, this.descripcion, this.fecha, this.sala, this.prioridad, this.equipos);
+                //Crea un objeto FormData para enviar los datos de la tarea y el archivo al servidor
                 const formData = new FormData();
                 formData.append('nombre', this.nombre);
                 formData.append('descripcion', this.descripcion);
                 formData.append('fecha', this.fecha);
                 formData.append('sala', this.sala);
+                formData.append('nombre', this.nombre);
                 this.equipos.forEach(equipo => {
                     formData.append('equipos', equipo);
                 });
                 formData.append('prioridad', this.prioridad);
                 formData.append('observaciones', this.observaciones);
+                formData.append('nombre', this.nombre);
                 formData.append('archivo', this.archivo);
-                console.log(formData);
 
-                if (["alta", "media", "baja"].includes(this.prioridad)) {
-                    const res = await fetch("http://localhost:5000/tareas", {
-                        method: "POST",
+                //Verificar si la prioridad esta entre los valores permitidos
+                if (['alta', 'media', 'baja'].includes(this.prioridad)) {
+                    const res = await fetch('http://localhost:5000/tareas', {
+                        method: 'POST',
                         /*
-                        // headers: {
-                        //   "Content-type": "application/json",
-                        // },
-                        // body: JSON.stringify(nuevaTarea),*/
-                        body: formData
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(nuevaTarea)*/
                     });
-
                     await Swal.fire({
-                        icon: "success",
-                        title: "¡Tarea guardada!",
-                        text: "La nueva tarea se ha guardado correctamente.",
+                        icon: 'success',
+                        title: '¡Tarea guardada!',
+                        text: 'La nueva tarea se ha guardado correctamente'
                     });
-
                     if (!res.ok) {
                         const message = `An error has occured: ${res.status}`;
                         throw new Error(message);
                     }
 
+                    //Actualizar la lista de tareas despues de guardar la nueva tarea
                     await this.obtenerTareas();
                 }
+                //Limpiar los campos del formulario despues de guardar la tarea
                 this.limpiarTarea();
             } catch (error) {
-                console.error(error);
-                await Swal.fire({
-                    icon: "error",
-                    title: "Error al guardar la tarea",
-                    text: "Ha ocurrido un error al intentar guardar la tarea. Por favor, inténtalo de nuevo.",
-                });
-            }
-        },
-
-        async eliminarTarea(id) {
-            try {
-                const res = await fetch(`http://localhost:5000/tareas/${id}`, {
-                    method: "DELETE",
-                });
-
-                if (!res.ok) {
-                    const message = `An error has occured: ${res.status}`;
-                    throw new Error(message);
-                }
-
-                await Swal.fire({
-                    icon: "success",
-                    title: "¡Tarea eliminada!",
-                    text: "La nueva tarea se ha eliminado correctamente.",
-                });
-
-                await this.obtenerTareas();
-            } catch (error) {
-                console.error(error);
-                await Swal.fire({
-                    icon: "error",
-                    title: "Error al eliminar la tarea",
-                    text: "Ha ocurrido un error al intentar eliminar la tarea. Por favor, inténtalo de nuevo.",
+                console.error('Error al guardar el cliente: ', error);
+                //Mostrar mensaje de error
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al guardar el cliente en el servidor.',
                 });
             }
         },

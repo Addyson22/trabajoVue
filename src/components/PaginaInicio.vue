@@ -8,7 +8,7 @@
     <div class="row justify-content-center">
         <div class="text-center">
             <button class="btn btn-primary btn-lg m-2" @click="navegarA('/clientes')">Gestión <br>Clientes</button>
-            <button class="btn btn-primary btn-lg m-2" @click="navegarA('/articulos')">Gestión <br> Artículos</button>
+            <button class="btn btn-primary btn-lg m-2" @click="navegarA('/tareas')">Gestión <br> Tareas</button>
         </div><br>
         <div class="text-center">
             <button class="btn btn-primary btn-lg m-2" @click="navegarA('/ventas')">Gestión <br> Ventas</button>

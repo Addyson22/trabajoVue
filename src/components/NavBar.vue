@@ -13,6 +13,7 @@
                 <router-link v-if="articulosExists" to="/articulos" class="navbar-brand">Artículos</router-link>
                 <router-link v-if="ventasExists" to="/ventas" class="navbar-brand">Ventas</router-link>
                 <router-link v-if="tareasExists" to="/tareas" class="navbar-brand">Tareas</router-link>
+                <router-link v-if="pruebaExists" to="/prueba" class="navbar-brand">Prueba</router-link>
                 <router-link v-if="contactoExists" to="/contacto" class="navbar-brand">Contacto</router-link>
                 <form class="d-flex">
                     <input class="form-control me-2" type="search" placeholder="Búsqueda" aria-label="Search">
@@ -62,6 +63,9 @@ export default {
         },
         articulosExists() {
             return this.$router.hasRoute('articulos')
+        },
+        pruebaExists() {
+            return this.$router.hasRoute('prueba')
         },
         tareasExists() {
             return this.$router.hasRoute('tareas');

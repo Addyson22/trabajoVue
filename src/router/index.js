@@ -1,6 +1,7 @@
 import PaginaInicio from '@/components/PaginaInicio.vue'
 import TablaClientes from '@/components/TablaClientes.vue'
 import TablaTareas from '@/components/TablaTareas.vue'
+import PruebaHeader from '@/components/PruebaHeader.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
@@ -22,6 +23,12 @@ const routes = [
     path: '/tareas',
     name: 'tareas',
     component: TablaTareas
+  },
+
+  {
+    path: '/prueba',
+    name: 'prueba',
+    component: PruebaHeader
   }
 ]
 
